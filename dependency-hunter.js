@@ -24,19 +24,14 @@ if (!fs.existsSync(path.join(process.env.HOME, '.dependency-hunter'))) {
 			fs.writeFile(path.join(process.env.HOME, '.dependency-hunter/config.json'), JSON.stringify({
 				user: user,
 				pass: pass
-			}));
-
-			console.log('Thanks! Please run again');
-			process.exit();
+			}), function() {
+				console.log('Thanks! Please run again');
+				process.exit();
+			});
 		});
 	});
 
 	return;
-}
-
-if (!fs.existsSync(path.join(process.env.HOME, '.dependency-hunter/config.json'))) {
-	console.log('No config file. Please create .dependency-hunter/config.json in your home folder');
-	process.exit();
 }
 
 var config = JSON.parse(fs.readFileSync(path.join(process.env.HOME, '.dependency-hunter/config.json')));
