@@ -1,0 +1,20 @@
+{
+  "name": "dependency-hunter",
+  "version": "0.0.0",
+  "description": "Find node.js dependencies in github repositories",
+  "main": "index.js",
+  "bin": {
+    "dependency-hunter": "dependency-hunter.js"
+  },
+  "dependencies": {
+    "github": "^0.2.1",
+    "request": "^2.38.0",
+    "single-line-log": "^0.4.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tobias Baunbæk <tba@e-conomic.com>",
+  "license": "MIT"
+}
