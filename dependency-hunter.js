@@ -118,7 +118,7 @@ var findModule = function(organization, module) {
 		print('dependencies');
 		console.log('');
 		print('devDependencies');
-		console.log('\nData was last updated: %s', data.date);
+		console.log('\nData for %s was last updated: %s', organization, data.date);
 	});
 };
 
