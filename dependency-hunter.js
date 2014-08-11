@@ -4,13 +4,14 @@ var ghApi = require('github');
 var req = require('request');
 var log = require('single-line-log').stdout;
 var fs = require('fs');
+var path = require('path');
 
-if (!fs.existsSync('config.json')) {
-	console.log('No config file. Please create config.json.');
+if (!fs.existsSync(path.join(process.env.HOME, '.dependency-hunter.json'))) {
+	console.log('No config file. Please create .dependency-hunter.json in your home folder');
 	process.exit();
 }
 
-var config = JSON.parse(fs.readFileSync('config.json'));
+var config = JSON.parse(fs.readFileSync(path.join(process.env.HOME, '.dependency-hunter.json')));
 
 var github = new ghApi({
 	version: '3.0.0'
