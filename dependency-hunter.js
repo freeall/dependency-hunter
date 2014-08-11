@@ -5,13 +5,41 @@ var req = require('request');
 var log = require('single-line-log').stdout;
 var fs = require('fs');
 var path = require('path');
+var readline = require('readline');
 
-if (!fs.existsSync(path.join(process.env.HOME, '.dependency-hunter.json'))) {
-	console.log('No config file. Please create .dependency-hunter.json in your home folder');
+if (!fs.existsSync(path.join(process.env.HOME, '.dependency-hunter'))) {
+	var rl = readline.createInterface({
+		input: process.stdin,
+		output: process.stdout
+	});
+
+	console.log('Need some github info this first time.');
+	rl.question('Github user: ', function(user) {
+		if (!user) return process.exit();
+
+		rl.question('Github pass: ', function(pass) {
+			if (!pass) return process.exit();
+
+			fs.mkdirSync(path.join(process.env.HOME, '.dependency-hunter'));
+			fs.writeFile(path.join(process.env.HOME, '.dependency-hunter/config.json'), JSON.stringify({
+				user: user,
+				pass: pass
+			}));
+
+			console.log('Thanks! Please run again');
+			process.exit();
+		});
+	});
+
+	return;
+}
+
+if (!fs.existsSync(path.join(process.env.HOME, '.dependency-hunter/config.json'))) {
+	console.log('No config file. Please create .dependency-hunter/config.json in your home folder');
 	process.exit();
 }
 
-var config = JSON.parse(fs.readFileSync(path.join(process.env.HOME, '.dependency-hunter.json')));
+var config = JSON.parse(fs.readFileSync(path.join(process.env.HOME, '.dependency-hunter/config.json')));
 
 var github = new ghApi({
 	version: '3.0.0'
@@ -53,7 +81,7 @@ var update = function(organization) {
 				repositories: result
 			};
 
-			fs.writeFile(organization+'.json', JSON.stringify(data), function(err) {
+			fs.writeFile(path.join(process.env.HOME, '.dependency-hunter/'+organization+'.json'), JSON.stringify(data), function(err) {
 				if (err) return console.error(err);
 				log.clear();
 				console.log('\nDone');
@@ -91,12 +119,12 @@ var update = function(organization) {
 };
 
 var findModule = function(organization, module) {
-	if (!fs.existsSync(organization+'.json')) {
+	if (!fs.existsSync(path.join(process.env.HOME, '.dependency-hunter/'+organization+'.json'))) {
 		console.log('Data doesn\'t exist for %s. Please run "%s update".', organization, organization);
 		process.exit();
 	}
 
-	fs.readFile(organization+'.json', function(err, data) {
+	fs.readFile(path.join(process.env.HOME, '.dependency-hunter/'+organization+'.json'), function(err, data) {
 		if (err) return console.error(err);
 
 		data = JSON.parse(data);

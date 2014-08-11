@@ -6,18 +6,11 @@ Find node.js dependencies in github repositories.
 
 `npm install dependency-hunter -g`
 
-Then create a `.dependency-hunter.json` in your home folder and fill it with something like this:
-
-```
-{
- 	"user": "mygithubuser",
- 	"pass": "mygithubpass"
-}
-```
+The first time you run it, the application will ask for github user/pass (will be stored in ~/.dependency-hunter/config.json).
 
 ## Usage
 
-Before running it, you should update the data from your organization
+Before running it, you should update the data from your organization:
 
 `dependency-hunter myorgnization update`
 
