@@ -1,6 +1,6 @@
 {
   "name": "dependency-hunter",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Find node.js dependencies in github repositories",
   "main": "index.js",
   "bin": {
