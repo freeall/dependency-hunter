@@ -8,6 +8,10 @@ var fs = require('fs');
 var path = require('path');
 var readline = require('readline');
 
+var github = new ghApi({
+	version: '3.0.0'
+});
+
 var update = function(organization) {
 	var getAllRepos = function(callback) {
 		var page = 1;
@@ -117,10 +121,6 @@ ghauth({
 	note: 'Get all repositories'
 }, function(err, result) {
 	if (err) return console.error(err);
-
-	var github = new ghApi({
-		version: '3.0.0'
-	});
 
 	github.authenticate({
 		type: 'oauth',
