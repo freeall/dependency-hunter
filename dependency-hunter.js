@@ -18,20 +18,35 @@ var update = function(organization, token) {
 	var getAllRepos = function(callback) {
 		var page = 1;
 		var res = [];
+		var type = 'User';
 
-		(function loop() {
-			github.repos.getFromOrg({
+		var onend = function() {
+			if (type === 'User' && !res.length) {
+				type = 'Org';
+				next();
+				return;
+			}
+			callback(null, res);
+		};
+
+		var next = function() {
+			github.repos['getFrom'+type]({
 				org: organization,
+				user: organization,
+				type: 'all',
 				per_page: 100,
 				page: page
 			}, function(err, repos) {
 				if (err) return callback(err);
-				if (!repos.length) return callback(null, res);
+				if (!repos.length) return onend();
+
 				res = res.concat(repos);
 				page++;
-				loop();
+				next();
 			});
-		})();
+		};
+
+		next();
 	};
 
 	getAllRepos(function(err, repos) {

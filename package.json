@@ -1,7 +1,23 @@
 {
   "name": "dependency-hunter",
   "version": "1.2.3",
-  "description": "Find node.js dependencies in github repositories",
+  "description": "Find node.js dependencies in github repositories. Goes through package.json in each repository so you can easily find dependencies and devDependencies",
+  "keywords": [
+    "dependency",
+    "dependencies",
+    "devDependency",
+    "devDependencies",
+    "module",
+    "package.json",
+    "github",
+    "repo",
+    "repository",
+    "repositories",
+    "find",
+    "search",
+    "user",
+    "organization"
+  ],
   "main": "dependency-hunter.js",
   "bin": {
     "dependency-hunter": "dependency-hunter.js"
@@ -11,10 +27,6 @@
     "github": "^0.2.1",
     "request": "^2.38.0",
     "single-line-log": "^0.4.1"
-  },
-  "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Tobias Baunbæk <tba@e-conomic.com>",
   "license": "MIT"
