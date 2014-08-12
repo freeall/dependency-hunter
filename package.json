@@ -2,11 +2,12 @@
   "name": "dependency-hunter",
   "version": "1.1.1",
   "description": "Find node.js dependencies in github repositories",
-  "main": "index.js",
+  "main": "dependency-hunter.js",
   "bin": {
     "dependency-hunter": "dependency-hunter.js"
   },
   "dependencies": {
+    "ghauth": "^0.3.1",
     "github": "^0.2.1",
     "request": "^2.38.0",
     "single-line-log": "^0.4.1"

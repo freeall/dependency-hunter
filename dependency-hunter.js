@@ -1,50 +1,12 @@
 #!/usr/bin/env node
 
+var ghauth = require('ghauth');
 var ghApi = require('github');
 var req = require('request');
 var log = require('single-line-log').stdout;
 var fs = require('fs');
 var path = require('path');
 var readline = require('readline');
-
-if (!fs.existsSync(path.join(process.env.HOME, '.dependency-hunter'))) {
-	var rl = readline.createInterface({
-		input: process.stdin,
-		output: process.stdout
-	});
-
-	console.log('Need some github info this first time.');
-	rl.question('Github user: ', function(user) {
-		if (!user) return process.exit();
-
-		rl.question('Github pass: ', function(pass) {
-			if (!pass) return process.exit();
-
-			fs.mkdirSync(path.join(process.env.HOME, '.dependency-hunter'));
-			fs.writeFile(path.join(process.env.HOME, '.dependency-hunter/config.json'), JSON.stringify({
-				user: user,
-				pass: pass
-			}), function() {
-				console.log('Thanks! Please run again');
-				process.exit();
-			});
-		});
-	});
-
-	return;
-}
-
-var config = JSON.parse(fs.readFileSync(path.join(process.env.HOME, '.dependency-hunter/config.json')));
-
-var github = new ghApi({
-	version: '3.0.0'
-});
-
-github.authenticate({
-	type: 'basic',
-	username: config.user,
-	password: config.pass
-});
 
 var update = function(organization) {
 	var getAllRepos = function(callback) {
@@ -112,7 +74,6 @@ var update = function(organization) {
 		})();
 	});
 };
-
 var findModule = function(organization, module) {
 	if (!fs.existsSync(path.join(process.env.HOME, '.dependency-hunter/'+organization+'.json'))) {
 		console.log('Data doesn\'t exist for %s. Please run "%s update".', organization, organization);
@@ -144,33 +105,51 @@ var findModule = function(organization, module) {
 		console.log('\nData for %s was last updated: %s', organization, data.date);
 	});
 };
-
 var printHelp = function() {
 	console.log('Please use:');
 	console.log('  ORGANIZATION update. Updates the data for organization.');
 	console.log('  ORGANIZATION find MODULE. Locates the repositories who depends on MODULE');
 };
 
-if (process.argv.length < 4) {
-	printHelp();
-	process.exit();
-}
+ghauth({
+	configName: 'dependency-hunter',
+	scopes: ['repo'],
+	note: 'Get all repositories'
+}, function(err, result) {
+	if (err) return console.error(err);
 
-var organization = process.argv[2];
-var command = (process.argv[3] || '').toLowerCase();
-var moduleName = process.argv[4];
+	var github = new ghApi({
+		version: '3.0.0'
+	});
 
-if (command === 'update') {
-	update(organization);
-} else if (command === 'find') {
-	if (!moduleName) {
-		console.log('No module name.');
+	github.authenticate({
+		type: 'oauth',
+		token: result.token
+	});
+
+	if (process.argv.length < 4) {
 		printHelp();
 		process.exit();
 	}
 
-	findModule(organization, moduleName);
-} else {
-	console.log('Wrong command: %s', command);
-	printHelp();
-}
+	if (!fs.existsSync(path.join(process.env.HOME, '.dependency-hunter'))) fs.mkdirSync(path.join(process.env.HOME, '.dependency-hunter'));
+
+	var organization = process.argv[2];
+	var command = (process.argv[3] || '').toLowerCase();
+	var moduleName = process.argv[4];
+
+	if (command === 'update') {
+		update(organization);
+	} else if (command === 'find') {
+		if (!moduleName) {
+			console.log('No module name.');
+			printHelp();
+			process.exit();
+		}
+
+		findModule(organization, moduleName);
+	} else {
+		console.log('Wrong command: %s', command);
+		printHelp();
+	}
+});

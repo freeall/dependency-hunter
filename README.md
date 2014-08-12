@@ -6,7 +6,7 @@ Find node.js dependencies in github repositories.
 
 `npm install dependency-hunter -g`
 
-The first time you run it, the application will ask for github user/pass (will be stored in ~/.dependency-hunter/config.json).
+The first time you run it, the application will ask for github user/pass. Supports two-factor authentication if you have it.
 
 ## Usage
 
