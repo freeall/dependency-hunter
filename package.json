@@ -22,6 +22,7 @@
   "bin": {
     "dependency-hunter": "dependency-hunter.js"
   },
+  "repository": "git@github.com:freeall/dependency-hunter.git",
   "dependencies": {
     "ghauth": "^0.3.1",
     "github": "^0.2.1",
