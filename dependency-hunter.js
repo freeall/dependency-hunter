@@ -8,6 +8,8 @@ var fs = require('fs');
 var path = require('path');
 var readline = require('readline');
 
+var HOME = process.env.HOME || process.env.USERPROFILE;
+
 var github = new ghApi({
 	version: '3.0.0'
 });
@@ -42,7 +44,7 @@ var update = function(organization, token) {
 				repositories: result
 			};
 
-			fs.writeFile(path.join(process.env.HOME, '.dependency-hunter/'+organization+'.json'), JSON.stringify(data), function(err) {
+			fs.writeFile(path.join(HOME, '.dependency-hunter/'+organization+'.json'), JSON.stringify(data), function(err) {
 				if (err) return console.error(err);
 				log.clear();
 				console.log('\nDone');
@@ -84,12 +86,12 @@ var update = function(organization, token) {
 	});
 };
 var findModule = function(organization, module) {
-	if (!fs.existsSync(path.join(process.env.HOME, '.dependency-hunter/'+organization+'.json'))) {
+	if (!fs.existsSync(path.join(HOME, '.dependency-hunter/'+organization+'.json'))) {
 		console.log('Data doesn\'t exist for %s. Please run "%s update".', organization, organization);
 		process.exit();
 	}
 
-	fs.readFile(path.join(process.env.HOME, '.dependency-hunter/'+organization+'.json'), function(err, data) {
+	fs.readFile(path.join(HOME, '.dependency-hunter/'+organization+'.json'), function(err, data) {
 		if (err) return console.error(err);
 
 		data = JSON.parse(data);
@@ -139,7 +141,7 @@ ghauth({
 		process.exit();
 	}
 
-	if (!fs.existsSync(path.join(process.env.HOME, '.dependency-hunter'))) fs.mkdirSync(path.join(process.env.HOME, '.dependency-hunter'));
+	if (!fs.existsSync(path.join(HOME, '.dependency-hunter'))) fs.mkdirSync(path.join(HOME, '.dependency-hunter'));
 
 	var organization = process.argv[2];
 	var command = (process.argv[3] || '').toLowerCase();
