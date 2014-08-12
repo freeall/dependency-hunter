@@ -12,7 +12,7 @@ var github = new ghApi({
 	version: '3.0.0'
 });
 
-var update = function(organization) {
+var update = function(organization, token) {
 	var getAllRepos = function(callback) {
 		var page = 1;
 		var res = [];
@@ -55,16 +55,21 @@ var update = function(organization) {
 
 			log('Left to download:', repos.length);
 
-			req('https://'+config.user+':'+config.pass+'@raw.githubusercontent.com/'+organization+'/'+repository.name+'/master/package.json', function(err, res) {
+			github.repos.getContent({
+				user: organization,
+				repo: repository.name,
+				path: '/package.json'
+			}, function(err, res) {
+				if (err && err.code === 404) return next();
 				if (err) return console.error(err);
-
-				if (res.statusCode !== 200) return next();
-
+				
 				var body;
-				try { body = JSON.parse(res.body); }
+				try {
+					body = JSON.parse(new Buffer(res.content, 'base64'));
+				}
 				catch(e) {
 					console.log('Could not parse body for '+repository.name);
-					console.log(res.body, e, repository);
+					console.log(res);
 					return next();
 				}
 
@@ -122,9 +127,11 @@ ghauth({
 }, function(err, result) {
 	if (err) return console.error(err);
 
+	var token = result.token;
+
 	github.authenticate({
 		type: 'oauth',
-		token: result.token
+		token: token
 	});
 
 	if (process.argv.length < 4) {
@@ -139,7 +146,7 @@ ghauth({
 	var moduleName = process.argv[4];
 
 	if (command === 'update') {
-		update(organization);
+		update(organization, token);
 	} else if (command === 'find') {
 		if (!moduleName) {
 			console.log('No module name.');
