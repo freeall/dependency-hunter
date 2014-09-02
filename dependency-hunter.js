@@ -31,6 +31,7 @@ var update = function(organization, token) {
 		};
 
 		var next = function() {
+			log('Getting list of repositories from '+organization+'. Page: #'+page);
 			github.repos['getFrom'+type]({
 				org: organization,
 				user: organization,
@@ -49,6 +50,7 @@ var update = function(organization, token) {
 
 		next();
 	};
+
 	listOfRepos(function(err, repos) {
 		if (err) throw err;
 
