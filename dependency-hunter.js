@@ -7,6 +7,7 @@ var log = require('single-line-log').stdout;
 var fs = require('fs');
 var path = require('path');
 var readline = require('readline');
+var afterAll = require('after-all');
 
 var HOME = process.env.HOME || process.env.USERPROFILE;
 
@@ -15,7 +16,7 @@ var github = new ghApi({
 });
 
 var update = function(organization, token) {
-	var getAllRepos = function(callback) {
+	var listOfRepos = function(callback) {
 		var page = 1;
 		var res = [];
 		var type = 'User';
@@ -48,38 +49,36 @@ var update = function(organization, token) {
 
 		next();
 	};
+	listOfRepos(function(err, repos) {
+		if (err) throw err;
 
-	getAllRepos(function(err, repos) {
-		if (err) return console.log(err);
-
+		var left = repos.length;
 		var result = {};
-		var onend = function() {
+		var next = afterAll(function() {
 			var data = {
 				date: new Date(),
 				repositories: result
 			};
 
 			fs.writeFile(path.join(HOME, '.dependency-hunter/'+organization+'.json'), JSON.stringify(data), function(err) {
-				if (err) return console.error(err);
-				log.clear();
-				console.log('\nDone');
+				if (err) throw err;
+				log('');
 			});
-		};
-		(function next() {
-			var repository = repos.pop();
+		});
 
-			if (!repository) return onend();
-
-			log('Left to download:', repos.length);
+		repos.forEach(function(repository) {
+			var onend = next();
 
 			github.repos.getContent({
 				user: organization,
 				repo: repository.name,
 				path: '/package.json'
 			}, function(err, res) {
-				if (err && err.code === 404) return next();
-				if (err) return console.error(err);
-				
+				log('Left to download:', --left);
+
+				if (err && err.code === 404) return onend();
+				if (err) throw err;
+
 				var body;
 				try {
 					body = JSON.parse(new Buffer(res.content, 'base64'));
@@ -87,7 +86,7 @@ var update = function(organization, token) {
 				catch(e) {
 					console.log('Could not parse body for '+repository.name);
 					console.log(res);
-					return next();
+					return onend();
 				}
 
 				result[repository.name] = {
@@ -95,9 +94,10 @@ var update = function(organization, token) {
 					devDependencies: body.devDependencies
 				};
 
-				next();
+				onend();
 			});
-		})();
+		});
+
 	});
 };
 var findModule = function(organization, module) {
@@ -107,7 +107,7 @@ var findModule = function(organization, module) {
 	}
 
 	fs.readFile(path.join(HOME, '.dependency-hunter/'+organization+'.json'), function(err, data) {
-		if (err) return console.error(err);
+		if (err) throw err;
 
 		data = JSON.parse(data);
 
@@ -118,7 +118,7 @@ var findModule = function(organization, module) {
 				var version = (repo[type] || {})[module];
 				if (version !== undefined) {
 					count++;
-					console.log('%s is using %s, version: %s', name, module, version);
+					console.log('%s is using %s, %s', name, module, version);
 				}
 			});
 
@@ -142,7 +142,7 @@ ghauth({
 	scopes: ['repo'],
 	note: 'Get all repositories'
 }, function(err, result) {
-	if (err) return console.error(err);
+	if (err) throw err;
 
 	var token = result.token;
 
