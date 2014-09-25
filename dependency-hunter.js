@@ -118,7 +118,7 @@ var findModule = function(organization, module) {
 
 		var print = function(type) {
 			var count = 0;
-			Object.keys(data.repositories).forEach(function(name) {
+			Object.keys(data.repositories).sort().forEach(function(name) {
 				var repo = data.repositories[name];
 				var version = (repo[type] || {})[module];
 				if (type === 'repositories') {
