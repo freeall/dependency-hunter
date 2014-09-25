@@ -118,6 +118,13 @@ var findModule = function(organization, module) {
 			Object.keys(data.repositories).forEach(function(name) {
 				var repo = data.repositories[name];
 				var version = (repo[type] || {})[module];
+				// Module is NOT in the repo
+				if (module[0] === '-' && version === undefined) {
+					count++;
+					console.log('%s is not using %s', name, module.substr(1));
+					return;
+				}
+				// Module IS in the repo
 				if (version !== undefined) {
 					count++;
 					console.log('%s is using %s, %s', name, module, version);
@@ -127,9 +134,13 @@ var findModule = function(organization, module) {
 			console.log('Found %s %s', count, type);
 		};
 
-		print('dependencies');
-		console.log('');
-		print('devDependencies');
+		if (module[0] === '-') {
+			print('repositories');
+		} else {
+			print('dependencies');
+			console.log('');
+			print('devDependencies');
+		}
 		console.log('\nData for %s was last updated: %s', organization, data.date);
 	});
 };
