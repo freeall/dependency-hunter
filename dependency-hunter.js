@@ -144,17 +144,36 @@ var findModule = function(organization, module) {
 		console.log('\nData for %s was last updated: %s', organization, data.date);
 	});
 };
+var listModules = function(organization) {
+	if (!fs.existsSync(path.join(HOME, '.dependency-hunter/'+organization+'.json'))) {
+		console.log('Data doesn\'t exist for %s. Please run "%s update".', organization, organization);
+		process.exit();
+	}
+
+	fs.readFile(path.join(HOME, '.dependency-hunter/'+organization+'.json'), function(err, data) {
+		if (err) throw err;
+
+		data = JSON.parse(data);
+		Object.keys(data.repositories).forEach(function(name) {
+			console.log(name);
+		});
+		console.log('\nThere is %s repositories', Object.keys(data.repositories).length);
+		console.log('\nData for %s was last updated: %s', organization, data.date);
+	});
+};
 var printHelp = function() {
 	console.log([
 		'Usage: dependency-hunter [username] [command] [options?]',
 		'',
 		'Avaible commands are:',
 		'  update                Updates the data for the username/organization',
+		'  list                  Lists all modules for the username/organization',
 		'  find [module]         Finds the repositories that depends on the module',
 		'  find -[module]        Finds the repositories that doesn\'t depend on the module',
 		'',
 		'Examples:',
 		'  github update         Updates the data for the github organization',
+		'  github list           Lists all of githubs repositories (that is a node project)',
 		'  github find express   Find the repositories that has express as a dependency/devDependency',
 		'  github find -express  Find the repositories that doesn\'t use express'
 	].join('\n'));
@@ -187,6 +206,8 @@ ghauth({
 
 	if (command === 'update') {
 		update(organization, token);
+	} else if (command === 'list') {
+		listModules(organization);
 	} else if (command === 'find') {
 		if (!moduleName) {
 			console.log('No module name.');
