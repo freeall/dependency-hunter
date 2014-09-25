@@ -108,6 +108,9 @@ var findModule = function(organization, module) {
 		process.exit();
 	}
 
+	var depends = module[0] !== '-';
+	if (!depends) module = module.substr(1);
+
 	fs.readFile(path.join(HOME, '.dependency-hunter/'+organization+'.json'), function(err, data) {
 		if (err) throw err;
 
@@ -118,14 +121,17 @@ var findModule = function(organization, module) {
 			Object.keys(data.repositories).forEach(function(name) {
 				var repo = data.repositories[name];
 				var version = (repo[type] || {})[module];
-				// Module is NOT in the repo
-				if (module[0] === '-' && version === undefined) {
+				if (type === 'repositories') {
+					version = (repo['dependencies'] || {})[module] || (repo['devDependencies'] || {})[module];
+				}
+				// Repo is NOT depending on module
+				if (!depends && version === undefined) {
 					count++;
 					console.log('%s is not using %s', name, module.substr(1));
 					return;
 				}
-				// Module IS in the repo
-				if (version !== undefined) {
+				// Repo IS depending on module
+				if (depends && version !== undefined) {
 					count++;
 					console.log('%s is using %s, %s', name, module, version);
 				}
@@ -134,7 +140,7 @@ var findModule = function(organization, module) {
 			console.log('Found %s %s', count, type);
 		};
 
-		if (module[0] === '-') {
+		if (!depends) {
 			print('repositories');
 		} else {
 			print('dependencies');
