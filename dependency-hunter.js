@@ -127,7 +127,7 @@ var findModule = function(organization, module) {
 				// Repo is NOT depending on module
 				if (!depends && version === undefined) {
 					count++;
-					console.log('%s is not using %s', name, module.substr(1));
+					console.log('%s is not using %s', name, module);
 					return;
 				}
 				// Repo IS depending on module
