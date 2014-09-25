@@ -145,9 +145,19 @@ var findModule = function(organization, module) {
 	});
 };
 var printHelp = function() {
-	console.log('Please use:');
-	console.log('  ORGANIZATION update. Updates the data for organization.');
-	console.log('  ORGANIZATION find MODULE. Locates the repositories who depends on MODULE');
+	console.log([
+		'Usage: dependency-hunter [username] [command] [options?]',
+		'',
+		'Avaible commands are:',
+		'  update                Updates the data for the username/organization',
+		'  find [module]         Finds the repositories that depends on the module',
+		'  find -[module]        Finds the repositories that doesn\'t depend on the module',
+		'',
+		'Examples:',
+		'  github update         Updates the data for the github organization',
+		'  github find express   Find the repositories that has express as a dependency/devDependency',
+		'  github find -express  Find the repositories that doesn\'t use express'
+	].join('\n'));
 };
 
 ghauth({
