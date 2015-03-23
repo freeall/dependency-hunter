@@ -169,7 +169,7 @@ var listModules = function(organization) {
 };
 var printHelp = function() {
 	console.log([
-		'Usage: dependency-hunter [username] [command] [options?]',
+		'Usage: dependency-hunter [command] [username/organization] [options?]',
 		'',
 		'Avaible commands are:',
 		'  update                Updates the data for the username/organization',
@@ -178,10 +178,10 @@ var printHelp = function() {
 		'  find -[module]        Finds the repositories that doesn\'t depend on the module',
 		'',
 		'Examples:',
-		'  github update         Updates the data for the github organization',
-		'  github list           Lists all of githubs repositories (that is a node project)',
-		'  github find express   Find the repositories that has express as a dependency/devDependency',
-		'  github find -express  Find the repositories that doesn\'t use express'
+		'  update github         Updates the data for the organization github',
+		'  list github           Lists all of githubs repositories (that is a node project)',
+		'  find github express   Find the repositories that has express as a dependency/devDependency',
+		'  find github -express  Find the repositories that doesn\'t use express'
 	].join('\n'));
 };
 
@@ -206,8 +206,8 @@ ghauth({
 
 	if (!fs.existsSync(path.join(HOME, '.dependency-hunter'))) fs.mkdirSync(path.join(HOME, '.dependency-hunter'));
 
-	var organization = process.argv[2];
-	var command = (process.argv[3] || '').toLowerCase();
+	var command = (process.argv[2] || '').toLowerCase();
+	var organization = process.argv[3];
 	var moduleName = process.argv[4];
 
 	if (command === 'update') {
