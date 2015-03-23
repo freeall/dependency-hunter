@@ -1,16 +1,18 @@
 # dependency-hunter
 
-Find node.js dependencies in github repositories. Goes through `package.json` in each repository so you can easily find dependencies and devDependencies in each repository.
+Find module dependencies in github repositories.
 
-Works both for users and organizations.
+It's a good tool to use if you need to update/deprecate a module and want to find out who uses it first. Great for a large organization.
 
-If I wanted to find out how many of my own repositories that uses `request` I would run
+Goes through `package.json` in each repository so you can easily find dependencies and devDependencies in each repository. Works both for users and organizations.
+
+If I wanted to find out how many of my own repositories that uses `request` I would run:
 
 ```
-$ depency-hunter freeall find request
+$ depency-hunter find freeall request
 ```
 
-Which would return
+Which would return:
 
 ```
 tvcom is using request, version: ~2.21.0
@@ -41,7 +43,7 @@ Before running it, you should update the data from your user/organization
 
 After it has run you can now search for modules. To find out which repositories uses the `request` module do this:
 
-`dependency-hunter myuser find request`
+`dependency-hunter find myuser request`
 
 ## License
 
