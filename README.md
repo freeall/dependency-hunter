@@ -9,7 +9,7 @@ Goes through `package.json` in each repository so you can easily find dependenci
 If I wanted to find out how many of my own repositories that uses `request` I would run:
 
 ```
-$ depency-hunter find freeall request
+$ dependency-hunter find freeall request
 ```
 
 Which would return:
