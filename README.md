@@ -37,7 +37,7 @@ The first time you run it, the application will ask for github user/pass. Suppor
 
 Before running it, you should update the data from your user/organization
 
-`dependency-hunter myuser update`
+`dependency-hunter update myuser`
 
 After it has run you can now search for modules. To find out which repositories uses the `request` module do this:
 
