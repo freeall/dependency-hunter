@@ -1,6 +1,6 @@
 {
   "name": "dependency-hunter",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Find node.js dependencies in github repositories. Goes through package.json in each repository so you can easily find dependencies and devDependencies",
   "keywords": [
     "dependency",
@@ -24,11 +24,11 @@
   },
   "repository": "git@github.com:e-conomic/dependency-hunter.git",
   "dependencies": {
-    "after-all": "^2.0.0",
-    "ghauth": "^0.3.1",
-    "github": "^0.2.1",
-    "request": "^2.38.0",
-    "single-line-log": "^0.4.1"
+    "after-all": "^2.0.2",
+    "ghauth": "^3.0.0",
+    "github": "^0.2.4",
+    "request": "^2.58.0",
+    "single-line-log": "^1.0.0"
   },
   "author": "Tobias Baunbæk <tba@e-conomic.com>",
   "license": "MIT"

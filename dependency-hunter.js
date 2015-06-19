@@ -6,7 +6,6 @@ var req = require('request');
 var log = require('single-line-log').stdout;
 var fs = require('fs');
 var path = require('path');
-var readline = require('readline');
 var afterAll = require('after-all');
 
 var HOME = process.env.HOME || process.env.USERPROFILE;
@@ -15,7 +14,7 @@ var github = new ghApi({
 	version: '3.0.0'
 });
 
-var update = function(organization, token) {
+var update = function(organization) {
 	var listOfRepos = function(callback) {
 		var page = 1;
 		var res = [];
@@ -211,7 +210,7 @@ ghauth({
 	var moduleName = process.argv[4];
 
 	if (command === 'update') {
-		update(organization, token);
+		update(organization);
 	} else if (command === 'list') {
 		listModules(organization);
 	} else if (command === 'find') {
