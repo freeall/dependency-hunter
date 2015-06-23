@@ -22,7 +22,7 @@
   "bin": {
     "dependency-hunter": "dependency-hunter.js"
   },
-  "repository": "git@github.com:e-conomic/dependency-hunter.git",
+  "repository": "git@github.com:freeall/dependency-hunter.git",
   "dependencies": {
     "after-all": "^2.0.2",
     "ghauth": "^3.0.0",

@@ -1,4 +1,4 @@
-# dependency-hunter [![npm version](https://badge.fury.io/js/dependency-hunter.svg)](http://badge.fury.io/js/dependency-hunter) [![Dependency Status](https://david-dm.org/e-conomic/dependency-hunter.svg)](https://david-dm.org/e-conomic/dependency-hunter)
+# dependency-hunter [![npm version](https://badge.fury.io/js/dependency-hunter.svg)](http://badge.fury.io/js/dependency-hunter) [![Dependency Status](https://david-dm.org/freeall/dependency-hunter.svg)](https://david-dm.org/freeall/dependency-hunter)
 
 Find module dependencies in github repositories.
 
