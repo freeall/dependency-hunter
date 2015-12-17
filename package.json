@@ -1,6 +1,6 @@
 {
   "name": "dependency-hunter",
-  "version": "2.0.1",
+  "version": "3.0.0",
   "description": "Find node.js dependencies in github repositories. Goes through package.json in each repository so you can easily find dependencies and devDependencies",
   "keywords": [
     "dependency",
