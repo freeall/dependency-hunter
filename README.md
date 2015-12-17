@@ -4,7 +4,7 @@ Find module dependencies in github repositories.
 
 It's a good tool to use if you need to update/deprecate a module and want to find out who uses it first. Great for a large organization.
 
-Goes through `package.json` in each repository so you can easily find dependencies and devDependencies in each repository. Works both for users and organizations.
+Goes through `package.json` and `bower.json` in each repository so you can easily find dependencies and devDependencies in each repository. Works both for users and organizations.
 
 If I wanted to find out how many of my own repositories that uses `request` I would run:
 

@@ -7,6 +7,7 @@ var log = require('single-line-log').stdout;
 var fs = require('fs');
 var path = require('path');
 var afterAll = require('after-all');
+var extend = require('xtend');
 
 var HOME = process.env.HOME || process.env.USERPROFILE;
 
@@ -67,38 +68,46 @@ var update = function(organization) {
 			});
 		});
 
-		repos.forEach(function(repository) {
-			var onend = next();
-
+		var loadJson = function(file, repository, callback) {
 			github.repos.getContent({
 				user: organization,
 				repo: repository.name,
-				path: '/package.json'
+				path: file
 			}, function(err, res) {
-				log('Left to download:', --left);
+				// File is not there
+				if (err && err.code === 404) return callback(null, {});
 
-				if (err && err.code === 404) return onend();
-				if (err) throw err;
-
-				var body;
+				var json;
 				try {
-					body = JSON.parse(new Buffer(res.content, 'base64'));
+					json = JSON.parse(new Buffer(res.content, 'base64'));
 				}
 				catch(e) {
-					console.log('Could not parse body for '+repository.name);
-					console.log(res);
-					return onend();
+					// File is not proper json
+					return callback(new Error('Could not parse body for '+repository.name));
 				}
 
-				result[repository.name] = {
-					dependencies: body.dependencies,
-					devDependencies: body.devDependencies
-				};
+				callback(null, json);
+			});
+		};
 
-				onend();
+		repos.forEach(function(repository) {
+			var onend = next();
+
+			loadJson('/package.json', repository, function(err, npmModules) {
+				if (err) console.error(err);
+
+				loadJson('/bower.json', repository, function(err, bowerModules) {
+					if (err) console.error(err);
+
+					result[repository.name] = {
+						dependencies: extend(npmModules.dependencies, bowerModules.dependencies),
+						devDependencies: extend(npmModules.devDependencies, bowerModules.devDependencies)
+					};
+
+					onend();
+				});
 			});
 		});
-
 	});
 };
 var findModule = function(organization, module) {
