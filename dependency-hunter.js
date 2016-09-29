@@ -2,7 +2,6 @@
 
 var ghauth = require('ghauth');
 var ghApi = require('github');
-var req = require('request');
 var log = require('single-line-log').stdout;
 var fs = require('fs');
 var path = require('path');
@@ -32,7 +31,7 @@ var update = function(organization) {
 
 		var next = function() {
 			log('Getting list of repositories from '+organization+'. Page: #'+page);
-			github.repos['getFrom'+type]({
+			github.repos['getFor' + type]({
 				org: organization,
 				user: organization,
 				type: 'all',
