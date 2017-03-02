@@ -18,11 +18,11 @@ var update = function(organization) {
 	var listOfRepos = function(callback) {
 		var page = 1;
 		var res = [];
-		var type = 'User';
+		var type = 'Org';
 
-		var onend = function() {
-			if (type === 'User' && !res.length) {
-				type = 'Org';
+		var onend = function(err) {
+			if (type === 'Org' && (!res.length || err && err.code === 404)) {
+				type = 'User';
 				next();
 				return;
 			}
@@ -31,17 +31,16 @@ var update = function(organization) {
 
 		var next = function() {
 			log('Getting list of repositories from '+organization+'. Page: #'+page);
-			github.repos['getFor' + type]({
+			var method = type === 'Org' ? 'getForOrg' : 'getAll';
+			github.repos[method]({
 				org: organization,
-				user: organization,
+				username: organization,
 				type: 'all',
 				per_page: 100,
 				page: page
-			}, function(err, repos) {
-				if (err) return callback(err);
-				if (!repos.length) return onend();
-
-				res = res.concat(repos);
+			}, function(err, resp) {
+				if (err || !resp.data.length) return onend(err);
+				res = res.concat(resp.data.filter((repo) => repo.owner.login === organization));
 				page++;
 				next();
 			});
@@ -53,7 +52,6 @@ var update = function(organization) {
 	listOfRepos(function(err, repos) {
 		if (err) throw err;
 
-		var left = repos.length;
 		var result = {};
 		var next = afterAll(function() {
 			var data = {
@@ -69,7 +67,7 @@ var update = function(organization) {
 
 		var loadJson = function(file, repository, callback) {
 			github.repos.getContent({
-				user: organization,
+				owner: organization,
 				repo: repository.name,
 				path: file
 			}, function(err, res) {
@@ -78,11 +76,11 @@ var update = function(organization) {
 
 				var json;
 				try {
-					json = JSON.parse(new Buffer(res.content, 'base64'));
+					json = JSON.parse(new Buffer(res.data.content, 'base64'));
 				}
 				catch(e) {
 					// File is not proper json
-					return callback(new Error('Could not parse body for '+repository.name));
+					return callback(new Error(e + 'Could not parse body for '+repository.name));
 				}
 
 				callback(null, json);
