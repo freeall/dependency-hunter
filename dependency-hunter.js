@@ -73,6 +73,8 @@ var update = function(organization) {
 			}, function(err, res) {
 				// File is not there
 				if (err && err.code === 404) return callback(null, {});
+				// Error from github API
+				if (err) return callback(err);
 
 				var json;
 				try {
